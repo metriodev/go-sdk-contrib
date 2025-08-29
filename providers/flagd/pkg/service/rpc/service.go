@@ -40,6 +40,7 @@ type Configuration struct {
 	SocketPath      string
 	TLSEnabled      bool
 	OtelInterceptor bool
+	HTTPClient      *http.Client
 }
 
 // Service handles the client side  interface for the flagd server
@@ -610,13 +611,18 @@ func newClient(cfg Configuration) (schemaConnectV1.ServiceClient, error) {
 		options = append(options, connect.WithInterceptors(interceptor))
 	}
 
-	return schemaConnectV1.NewServiceClient(
-		&http.Client{
+	httpClient := cfg.HTTPClient
+	if httpClient == nil {
+		httpClient = &http.Client{
 			Transport: &http.Transport{
 				TLSClientConfig: tlsConfig,
 				DialContext:     dialContext,
 			},
-		},
+		}
+	}
+
+	return schemaConnectV1.NewServiceClient(
+		httpClient,
 		url,
 		options...,
 	), nil
