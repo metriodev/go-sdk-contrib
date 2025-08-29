@@ -3,15 +3,17 @@ package flagd
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"strconv"
 	"strings"
 
 	"github.com/go-logr/logr"
 	"github.com/open-feature/flagd/core/pkg/sync"
+	"google.golang.org/grpc"
+
 	"github.com/open-feature/go-sdk-contrib/providers/flagd/internal/cache"
 	"github.com/open-feature/go-sdk-contrib/providers/flagd/internal/logger"
-	"google.golang.org/grpc"
 )
 
 type ResolverType string
@@ -64,6 +66,7 @@ type ProviderConfiguration struct {
 	CustomSyncProvider               sync.ISync
 	CustomSyncProviderUri            string
 	GrpcDialOptionsOverride          []grpc.DialOption
+	HTTPClient                       *http.Client
 
 	log logr.Logger
 }
@@ -395,5 +398,12 @@ func WithCustomSyncProviderAndUri(customSyncProvider sync.ISync, customSyncProvi
 func WithGrpcDialOptionsOverride(grpcDialOptionsOverride []grpc.DialOption) ProviderOption {
 	return func(p *ProviderConfiguration) {
 		p.GrpcDialOptionsOverride = grpcDialOptionsOverride
+	}
+}
+
+// WithHTTPClient allows to set a custom HTTP client for the provider.
+func WithHTTPClient(client *http.Client) ProviderOption {
+	return func(p *ProviderConfiguration) {
+		p.HTTPClient = client
 	}
 }
