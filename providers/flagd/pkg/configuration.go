@@ -3,6 +3,7 @@ package flagd
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"strconv"
 	"strings"
@@ -64,6 +65,7 @@ type ProviderConfiguration struct {
 	CustomSyncProvider               sync.ISync
 	CustomSyncProviderUri            string
 	GrpcDialOptionsOverride          []grpc.DialOption
+	HTTPClient                       *http.Client
 
 	log logr.Logger
 }
@@ -395,5 +397,12 @@ func WithCustomSyncProviderAndUri(customSyncProvider sync.ISync, customSyncProvi
 func WithGrpcDialOptionsOverride(grpcDialOptionsOverride []grpc.DialOption) ProviderOption {
 	return func(p *ProviderConfiguration) {
 		p.GrpcDialOptionsOverride = grpcDialOptionsOverride
+	}
+}
+
+// WithHTTPClient allows to set a custom HTTP client for the provider.
+func WithHTTPClient(client *http.Client) ProviderOption {
+	return func(p *ProviderConfiguration) {
+		p.HTTPClient = client
 	}
 }

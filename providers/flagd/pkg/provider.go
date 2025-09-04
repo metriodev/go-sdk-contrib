@@ -55,6 +55,7 @@ func NewProvider(opts ...ProviderOption) (*Provider, error) {
 				SocketPath:      provider.providerConfiguration.SocketPath,
 				TLSEnabled:      provider.providerConfiguration.Tls,
 				OtelInterceptor: provider.providerConfiguration.OtelIntercept,
+				HTTPClient:      provider.providerConfiguration.HTTPClient,
 			},
 			cacheService,
 			provider.providerConfiguration.log,

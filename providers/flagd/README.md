@@ -105,6 +105,7 @@ Configuration can be provided as constructor options or as environment variables
 | WithOfflineFilePath                                      | FLAGD_OFFLINE_FLAG_SOURCE_PATH | string                      | ""        | file                |
 | WithProviderID                                           | FLAGD_SOURCE_PROVIDER_ID       | string                      | ""        | in-process          |
 | WithSelector                                             | FLAGD_SOURCE_SELECTOR          | string                      | ""        | in-process          | 
+| WithHTTPClient                                           |                                | *http.Client                | nil       | rpc                 |
 
 ### Overriding behavior
 

@@ -1,6 +1,7 @@
 package flagd
 
 import (
+	"net/http"
 	"reflect"
 	"testing"
 
@@ -41,6 +42,7 @@ func TestNewProvider(t *testing.T) {
 		expectCustomSyncProviderUri   string
 		expectOfflineFlagSourcePath   string
 		expectGrpcDialOptionsOverride []grpc.DialOption
+		expectedHTTPClient            *http.Client
 		options                       []ProviderOption
 	}{
 		{
@@ -269,6 +271,19 @@ func TestNewProvider(t *testing.T) {
 				WithOfflineFilePath("offlineFilePath"),
 			},
 		},
+		{
+			name:               "with custom HTTPClient",
+			expectedResolver:   rpc,
+			expectPort:         defaultRpcPort,
+			expectHost:         defaultHost,
+			expectCacheType:    defaultCache,
+			expectMaxRetries:   defaultMaxEventStreamRetries,
+			expectCacheSize:    defaultMaxCacheSize,
+			expectedHTTPClient: http.DefaultClient,
+			options: []ProviderOption{
+				WithHTTPClient(http.DefaultClient),
+			},
+		},
 	}
 
 	for _, test := range tests {
@@ -367,6 +382,11 @@ func TestNewProvider(t *testing.T) {
 				if config.GrpcDialOptionsOverride != nil {
 					t.Errorf("incorrent configuration GrpcDialOptionsOverride, expected nil, got %v", config.GrpcDialOptionsOverride)
 				}
+			}
+
+			if config.HTTPClient != test.expectedHTTPClient {
+				t.Errorf("incorrect configuration HttpClient, expected %v, got %v",
+					test.expectedHTTPClient, config.HTTPClient)
 			}
 
 			// this line will fail linting if this provider is no longer compatible with the openfeature sdk
